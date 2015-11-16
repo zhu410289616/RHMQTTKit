@@ -1,0 +1,2 @@
+# RHMQTTKit
+基于RHSocketKit框架实现的MQTT协议，底层使用CocoaAsyncSocket。
