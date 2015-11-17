@@ -13,22 +13,23 @@
 //http://www.blogjava.net/yongboy/archive/2014/02/09/409630.html
 //http://www.blogjava.net/yongboy/archive/2014/02/10/409689.html
 
+/** message type */
 typedef NS_ENUM(UInt8, RHMQTTMessageType) {
-    RHMQTTMessageTypeConnect = 1,
-    RHMQTTMessageTypeConnAck = 2,
-    RHMQTTMessageTypePublish = 3,
-    RHMQTTMessageTypePubAck = 4,
-    RHMQTTMessageTypePubRec = 5,
-    RHMQTTMessageTypePubRel = 6,
-    RHMQTTMessageTypePubComp = 7,
-    RHMQTTMessageTypeSubscribe = 8,
-    RHMQTTMessageTypeSubAck = 9,
-    RHMQTTMessageTypeUnsubscribe = 10,
-    RHMQTTMessageTypeUnsubAck = 11,
-    RHMQTTMessageTypePingReq = 12,
-    RHMQTTMessageTypePingResp = 13,
-    RHMQTTMessageTypeDisconnect = 14,
-    RHMQTTMessageTypeReserved = 15
+    RHMQTTMessageTypeConnect = 1,           //client request to connect to server
+    RHMQTTMessageTypeConnAck = 2,           //connect acknowledgment
+    RHMQTTMessageTypePublish = 3,           //publish message
+    RHMQTTMessageTypePubAck = 4,            //publish acknowledgment
+    RHMQTTMessageTypePubRec = 5,            //publish received (assured delivery part 1)
+    RHMQTTMessageTypePubRel = 6,            //publish release (assured delivery part 2)
+    RHMQTTMessageTypePubComp = 7,           //publish complete (assured delivery part 3)
+    RHMQTTMessageTypeSubscribe = 8,         //client subscribe request
+    RHMQTTMessageTypeSubAck = 9,            //subscribe acknowledgment
+    RHMQTTMessageTypeUnsubscribe = 10,      //client unsubscribe request
+    RHMQTTMessageTypeUnsubAck = 11,         //unsubscribe acknowledgment
+    RHMQTTMessageTypePingReq = 12,          //ping request
+    RHMQTTMessageTypePingResp = 13,         //ping response
+    RHMQTTMessageTypeDisconnect = 14,       //client is disconnecting
+    RHMQTTMessageTypeReserved = 15          //reserved
 };
 
 /** QoS(Quality of Service,服务质量) */

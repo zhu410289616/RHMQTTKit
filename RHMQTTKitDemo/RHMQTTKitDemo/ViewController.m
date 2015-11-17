@@ -16,6 +16,17 @@
 #import "RHMQTT.h"
 
 @interface ViewController ()
+{
+    UITextField *_hostTextField;
+    UITextField *_portTextField;
+    
+    UIButton *_connectButton;
+    UIButton *_disconnectButton;
+    UIButton *_subscribeButton;
+    UIButton *_unsubscribeButton;
+    UIButton *_pingReqButton;
+    UIButton *_publishButton;
+}
 
 @end
 
@@ -37,13 +48,126 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    NSString *host = @"127.0.0.1";
-    int port = 1883;
+    _hostTextField = [[UITextField alloc] init];
+    _hostTextField.frame = CGRectMake(20, 40, 200, 50);
+    _hostTextField.borderStyle = UITextBorderStyleRoundedRect;
+    _hostTextField.font = [UIFont systemFontOfSize:15];
+    _hostTextField.text = @"127.0.0.1";
+    [self.view addSubview:_hostTextField];
+    
+    _portTextField = [[UITextField alloc] init];
+    _portTextField.frame = CGRectMake(20, CGRectGetMaxY(_hostTextField.frame) + 10, 200, 50);
+    _portTextField.borderStyle = UITextBorderStyleRoundedRect;
+    _portTextField.font = [UIFont systemFontOfSize:15];
+    _portTextField.text = @"1883";
+    [self.view addSubview:_portTextField];
+    
+    _connectButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    _connectButton.frame = CGRectMake(20, CGRectGetMaxY(_portTextField.frame) + 20, 130, 40);
+    _connectButton.layer.borderColor = [UIColor blackColor].CGColor;
+    _connectButton.layer.borderWidth = 0.5;
+    _connectButton.layer.masksToBounds = YES;
+    [_connectButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+    [_connectButton setTitle:@"connect" forState:UIControlStateNormal];
+    [_connectButton addTarget:self action:@selector(doConnectButtonAction) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_connectButton];
+    
+    _subscribeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    _subscribeButton.frame = CGRectMake(20, CGRectGetMaxY(_connectButton.frame) + 20, 130, 40);
+    _subscribeButton.layer.borderColor = [UIColor blackColor].CGColor;
+    _subscribeButton.layer.borderWidth = 0.5;
+    _subscribeButton.layer.masksToBounds = YES;
+    [_subscribeButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+    [_subscribeButton setTitle:@"subscribe" forState:UIControlStateNormal];
+    [_subscribeButton addTarget:self action:@selector(doSubscribeButtonAction) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_subscribeButton];
+    
+    _pingReqButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    _pingReqButton.frame = CGRectMake(20, CGRectGetMaxY(_subscribeButton.frame) + 20, 130, 40);
+    _pingReqButton.layer.borderColor = [UIColor blackColor].CGColor;
+    _pingReqButton.layer.borderWidth = 0.5;
+    _pingReqButton.layer.masksToBounds = YES;
+    [_pingReqButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+    [_pingReqButton setTitle:@"ping" forState:UIControlStateNormal];
+    [_pingReqButton addTarget:self action:@selector(doPingButtonAction) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_pingReqButton];
+    
+    //
+    _disconnectButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    _disconnectButton.frame = CGRectMake(160, CGRectGetMaxY(_portTextField.frame) + 20, 130, 40);
+    _disconnectButton.layer.borderColor = [UIColor blackColor].CGColor;
+    _disconnectButton.layer.borderWidth = 0.5;
+    _disconnectButton.layer.masksToBounds = YES;
+    [_disconnectButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+    [_disconnectButton setTitle:@"disconnect" forState:UIControlStateNormal];
+    [_disconnectButton addTarget:self action:@selector(doDisconnectButtonAction) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_disconnectButton];
+    
+    _unsubscribeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    _unsubscribeButton.frame = CGRectMake(160, CGRectGetMaxY(_disconnectButton.frame) + 20, 130, 40);
+    _unsubscribeButton.layer.borderColor = [UIColor blackColor].CGColor;
+    _unsubscribeButton.layer.borderWidth = 0.5;
+    _unsubscribeButton.layer.masksToBounds = YES;
+    [_unsubscribeButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+    [_unsubscribeButton setTitle:@"unsubscribe" forState:UIControlStateNormal];
+    [_unsubscribeButton addTarget:self action:@selector(doUnsubscribeButtonAction) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_unsubscribeButton];
+    
+    _publishButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    _publishButton.frame = CGRectMake(160, CGRectGetMaxY(_unsubscribeButton.frame) + 20, 130, 40);
+    _publishButton.layer.borderColor = [UIColor blackColor].CGColor;
+    _publishButton.layer.borderWidth = 0.5;
+    _publishButton.layer.masksToBounds = YES;
+    [_publishButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+    [_publishButton setTitle:@"publish" forState:UIControlStateNormal];
+    [_publishButton addTarget:self action:@selector(doPublishButtonAction) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_publishButton];
+    
+}
+
+- (void)doConnectButtonAction
+{
+    NSString *host = _hostTextField.text.length > 5 ? _hostTextField.text : @"127.0.0.1";
+    int port = _portTextField.text.length > 1 ? [_portTextField.text intValue] : 1883;
     
     [RHSocketService sharedInstance].encoder = [[RHMQTTEncoder alloc] init];
     [RHSocketService sharedInstance].decoder = [[RHMQTTDecoder alloc] init];
     [[RHSocketService sharedInstance] startServiceWithHost:host port:port];
-    
+}
+
+- (void)doSubscribeButtonAction
+{
+    //finance/stock/#   finance/sotkc/ibm/+
+    RHMQTTSubscribe *req = [RHMQTT subscribeWithMessageId:3 topic:@"MQTTMessenger" qos:1];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
+}
+
+- (void)doPingButtonAction
+{
+    RHMQTTPingReq *req = [[RHMQTTPingReq alloc] init];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
+}
+
+- (void)doDisconnectButtonAction
+{
+    RHMQTTDisconnect *req = [[RHMQTTDisconnect alloc] init];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
+}
+
+- (void)doUnsubscribeButtonAction
+{
+    RHMQTTUnsubscribe *req = [RHMQTT unsubscribeWithMessageId:22 topic:@"MQTTMessenger"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
+}
+
+- (void)doPublishButtonAction
+{
+    RHMQTTPublish *req = [[RHMQTTPublish alloc] init];
+    req.fixedHeader.qos = RHMQTTQosLevelAtLeastOnce;//RHMQTTQosLevelExactlyOnce
+    req.variableHeader.topic = @"MQTTMessenger";
+    req.variableHeader.messageId = 99;
+    req.payload.message = [@"test publish" dataUsingEncoding:NSUTF8StringEncoding];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -57,14 +181,12 @@
     
     id state = notif.object;
     if (state && [state boolValue]) {
-        //        RHPacketHttpRequest *req = [[RHPacketHttpRequest alloc] init];
-        //        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
+        _connectButton.hidden = YES;
         
         RHMQTTConnect *req = [RHMQTT connectWithClientId:@"zrh" username:nil password:nil keepAlive:60 cleanSession:YES];
-        
         [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
     } else {
-        //
+        _connectButton.hidden = NO;
     }//if
 }
 
@@ -81,9 +203,7 @@
     RHMQTTFixedHeader *fixedHeader = [[RHMQTTFixedHeader alloc] initWithByte:header];
     switch (fixedHeader.type) {
         case RHMQTTMessageTypeConnAck: {
-            //finance/stock/#   finance/sotkc/ibm/+
-            RHMQTTSubscribe *req = [RHMQTT subscribeWithMessageId:3 topic:@"MQTTMessenger" qos:1];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
+            NSLog(@"RHMQTTMessageTypeConnAck: %d", fixedHeader.type);
         }
             break;
         case RHMQTTMessageTypePubAck: {
@@ -113,8 +233,13 @@
             UInt8 grantedQos = [[buffer subdataWithRange:NSMakeRange(4, 1)] valueFromByte];
             NSLog(@"msgId: %d, grantedQos: %d", msgId, grantedQos);
             
-            RHMQTTUnsubscribe *req = [RHMQTT unsubscribeWithMessageId:msgId + 1 topic:@"MQTTMessenger"];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
+            //
+//            RHMQTTUnsubscribe *req = [RHMQTT unsubscribeWithMessageId:msgId + 1 topic:@"MQTTMessenger"];
+//            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
+            
+            //
+            RHMQTTPingReq *req = [[RHMQTTPingReq alloc] init];
+//            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
         }
             break;
         case RHMQTTMessageTypeUnsubAck: {
@@ -122,7 +247,7 @@
             NSLog(@"msgId: %d, ", msgId);
             
             RHMQTTPingReq *req = [[RHMQTTPingReq alloc] init];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
+//            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
         }
             break;
         case RHMQTTMessageTypePingResp: {
@@ -134,11 +259,11 @@
             
             //publish
             RHMQTTPublish *req = [[RHMQTTPublish alloc] init];
-            req.fixedHeader.qos = RHMQTTQosLevelExactlyOnce;//RHMQTTQosLevelAtLeastOnce;
+            req.fixedHeader.qos = RHMQTTQosLevelAtLeastOnce;//RHMQTTQosLevelExactlyOnce
             req.variableHeader.topic = @"MQTTMessenger";
             req.variableHeader.messageId = 99;
             req.payload.message = [@"test publish" dataUsingEncoding:NSUTF8StringEncoding];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
+//            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
         }
             break;
             
