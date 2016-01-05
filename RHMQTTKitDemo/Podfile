@@ -1,4 +1,4 @@
 platform:ios,'7.0'
 
-pod 'RHSocketKit', '~> 1.0.7'
+pod 'RHSocketKit', '~> 2.0.1'
 
