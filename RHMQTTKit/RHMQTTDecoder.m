@@ -1,30 +1,18 @@
 //
-//  RHMQTTCodec.m
+//  RHMQTTDecoder.m
 //  RHMQTTKitDemo
 //
-//  Created by zhuruhong on 16/1/5.
+//  Created by zhuruhong on 16/2/23.
 //  Copyright © 2016年 zhuruhong. All rights reserved.
 //
 
-#import "RHMQTTCodec.h"
-#import "RHSocketConfig.h"
-#import "RHPacketResponse.h"
+#import "RHMQTTDecoder.h"
 
-@implementation RHMQTTCodec
+@implementation RHMQTTDecoder
 
-- (void)encode:(id<RHUpstreamPacket>)upstreamPacket output:(id<RHSocketEncoderOutputProtocol>)output
+- (NSInteger)decode:(id<RHDownstreamPacket>)downstreamPacket output:(id<RHSocketDecoderOutputProtocol>)output
 {
-    NSData *data = [upstreamPacket data];
-    NSMutableData *sendData = [NSMutableData dataWithData:data];
-    
-    NSTimeInterval timeout = [upstreamPacket timeout];
-    
-    RHSocketLog(@" timeout: %f, data: %@", timeout, sendData);
-    [output didEncode:sendData timeout:timeout];
-}
-
-- (NSInteger)decode:(NSData *)downstreamData output:(id<RHSocketDecoderOutputProtocol>)output
-{
+    NSData *downstreamData = [downstreamPacket object];
     NSUInteger headIndex = 0;
     NSUInteger lengthMultiplier = 1;
     //先读区2个字节的协议长度 (前2个字节为数据包的固定长度)
@@ -50,7 +38,7 @@
             break;
         }
         NSData *frameData = [downstreamData subdataWithRange:NSMakeRange(headIndex, remainingLength + 2)];
-        RHPacketResponse *frame = [[RHPacketResponse alloc] initWithData:frameData];
+        RHSocketPacketResponse *frame = [[RHSocketPacketResponse alloc] initWithObject:frameData];
         [output didDecode:frame];
         headIndex += remainingLength + 2;
     }

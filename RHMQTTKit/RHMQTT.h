@@ -6,7 +6,7 @@
 //  Copyright © 2015年 zhuruhong. All rights reserved.
 //
 
-#import "RHPacketRequest.h"
+#import "RHSocketPacketContext.h"
 
 //http://www.blogjava.net/yongboy/archive/2014/02/07/409587.html
 //http://www.blogjava.net/yongboy/archive/2014/02/09/409630.html
@@ -174,7 +174,7 @@ typedef NS_ENUM(UInt8, RHMQTTQosLevel) {
 
 #pragma mark - RHMQTTPacket
 
-@interface RHMQTTPacket : RHPacketRequest
+@interface RHMQTTPacket : RHSocketPacketRequest
 
 @property (nonatomic, strong) RHMQTTFixedHeader *fixedHeader;
 @property (nonatomic, strong) RHMQTTVariableHeader *variableHeader;
@@ -183,6 +183,7 @@ typedef NS_ENUM(UInt8, RHMQTTQosLevel) {
 - (NSData *)dataWithFixedHeader;
 - (NSData *)dataWithVariableHeader;
 - (NSData *)dataWithPayload;
+- (NSData *)data;
 
 @end
 

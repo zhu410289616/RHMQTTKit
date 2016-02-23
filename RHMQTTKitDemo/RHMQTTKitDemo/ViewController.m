@@ -11,9 +11,9 @@
 //RHSocket
 #import "RHSocketService.h"
 //MQTT
-#import "RHMQTTCodec.h"
+#import "RHMQTTEncoder.h"
+#import "RHMQTTDecoder.h"
 #import "RHMQTT.h"
-#import "RHPacketResponse.h"
 
 @interface ViewController ()
 {
@@ -130,7 +130,8 @@
     NSString *host = _hostTextField.text.length > 5 ? _hostTextField.text : @"127.0.0.1";
     int port = _portTextField.text.length > 1 ? [_portTextField.text intValue] : 1883;
     
-    [RHSocketService sharedInstance].codec = [[RHMQTTCodec alloc] init];
+    [RHSocketService sharedInstance].encoder = [[RHMQTTEncoder alloc] init];
+    [RHSocketService sharedInstance].decoder = [[RHMQTTDecoder alloc] init];
     [[RHSocketService sharedInstance] startServiceWithHost:host port:port];
 }
 
@@ -193,10 +194,10 @@
 {
     NSLog(@"detectSocketResponseData: %@", notif);
     
-    RHPacketResponse *frame = notif.userInfo[@"RHSocketPacket"];
-    NSLog(@"RHPacketFrame: %@", [frame data]);
+    RHSocketPacketResponse *frame = notif.userInfo[@"RHSocketPacket"];
+    NSLog(@"RHPacketFrame: %@", [frame object]);
     
-    NSData *buffer = [frame data];
+    NSData *buffer = [frame object];
     UInt8 header = 0;
     [buffer getBytes:&header range:NSMakeRange(0, 1)];
     RHMQTTFixedHeader *fixedHeader = [[RHMQTTFixedHeader alloc] initWithByte:header];

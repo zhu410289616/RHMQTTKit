@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8388636D1C3BAEC700EC68C1 /* RHMQTTCodec.m in Sources */ = {isa = PBXBuildFile; fileRef = 8388636C1C3BAEC700EC68C1 /* RHMQTTCodec.m */; };
 		83C446501BF9FAE200065AAC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 83C4464F1BF9FAE200065AAC /* main.m */; };
 		83C446531BF9FAE200065AAC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 83C446521BF9FAE200065AAC /* AppDelegate.m */; };
 		83C446561BF9FAE200065AAC /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83C446551BF9FAE200065AAC /* ViewController.m */; };
@@ -15,14 +14,14 @@
 		83C4465B1BF9FAE200065AAC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 83C4465A1BF9FAE200065AAC /* Assets.xcassets */; };
 		83C4465E1BF9FAE200065AAC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 83C4465C1BF9FAE200065AAC /* LaunchScreen.storyboard */; };
 		83C4466C1BF9FBF600065AAC /* RHMQTT.m in Sources */ = {isa = PBXBuildFile; fileRef = 83C446671BF9FBF600065AAC /* RHMQTT.m */; };
+		83F2FA4A1C7CA1D300758475 /* RHMQTTEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 83F2FA491C7CA1D300758475 /* RHMQTTEncoder.m */; };
+		83F2FA4D1C7CA1E200758475 /* RHMQTTDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 83F2FA4C1C7CA1E200758475 /* RHMQTTDecoder.m */; };
 		B3E1A609F5FCC7C795FEF45D /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E6B5F5EDC38FCAE46FBD21FF /* libPods.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		105057342BE873204D50C2EE /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		6618A994D48D969A4E833243 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
-		8388636B1C3BAEC700EC68C1 /* RHMQTTCodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RHMQTTCodec.h; sourceTree = "<group>"; };
-		8388636C1C3BAEC700EC68C1 /* RHMQTTCodec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RHMQTTCodec.m; sourceTree = "<group>"; };
 		83C4464B1BF9FAE200065AAC /* RHMQTTKitDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RHMQTTKitDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		83C4464F1BF9FAE200065AAC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		83C446511BF9FAE200065AAC /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -35,6 +34,10 @@
 		83C4465F1BF9FAE200065AAC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		83C446661BF9FBF600065AAC /* RHMQTT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RHMQTT.h; sourceTree = "<group>"; };
 		83C446671BF9FBF600065AAC /* RHMQTT.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RHMQTT.m; sourceTree = "<group>"; };
+		83F2FA481C7CA1D300758475 /* RHMQTTEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RHMQTTEncoder.h; sourceTree = "<group>"; };
+		83F2FA491C7CA1D300758475 /* RHMQTTEncoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RHMQTTEncoder.m; sourceTree = "<group>"; };
+		83F2FA4B1C7CA1E200758475 /* RHMQTTDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RHMQTTDecoder.h; sourceTree = "<group>"; };
+		83F2FA4C1C7CA1E200758475 /* RHMQTTDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RHMQTTDecoder.m; sourceTree = "<group>"; };
 		E6B5F5EDC38FCAE46FBD21FF /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -106,8 +109,10 @@
 			children = (
 				83C446661BF9FBF600065AAC /* RHMQTT.h */,
 				83C446671BF9FBF600065AAC /* RHMQTT.m */,
-				8388636B1C3BAEC700EC68C1 /* RHMQTTCodec.h */,
-				8388636C1C3BAEC700EC68C1 /* RHMQTTCodec.m */,
+				83F2FA481C7CA1D300758475 /* RHMQTTEncoder.h */,
+				83F2FA491C7CA1D300758475 /* RHMQTTEncoder.m */,
+				83F2FA4B1C7CA1E200758475 /* RHMQTTDecoder.h */,
+				83F2FA4C1C7CA1E200758475 /* RHMQTTDecoder.m */,
 			);
 			name = RHMQTTKit;
 			path = ../../RHMQTTKit;
@@ -246,9 +251,10 @@
 			files = (
 				83C446561BF9FAE200065AAC /* ViewController.m in Sources */,
 				83C446531BF9FAE200065AAC /* AppDelegate.m in Sources */,
-				8388636D1C3BAEC700EC68C1 /* RHMQTTCodec.m in Sources */,
 				83C446501BF9FAE200065AAC /* main.m in Sources */,
+				83F2FA4A1C7CA1D300758475 /* RHMQTTEncoder.m in Sources */,
 				83C4466C1BF9FBF600065AAC /* RHMQTT.m in Sources */,
+				83F2FA4D1C7CA1E200758475 /* RHMQTTDecoder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
