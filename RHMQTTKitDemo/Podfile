@@ -1,4 +1,5 @@
 platform:ios,'7.0'
 
-pod 'RHSocketKit', '~> 2.0.8'
-
+target 'RHMQTTKitDemo' do
+	pod 'RHSocketKit', '~> 2.1.4'
+end

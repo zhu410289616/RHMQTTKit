@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		32EA50CFF73D221668F11622 /* libPods-RHMQTTKitDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FE9A318ED4E03C7D18029D82 /* libPods-RHMQTTKitDemo.a */; };
 		83C446501BF9FAE200065AAC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 83C4464F1BF9FAE200065AAC /* main.m */; };
 		83C446531BF9FAE200065AAC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 83C446521BF9FAE200065AAC /* AppDelegate.m */; };
 		83C446561BF9FAE200065AAC /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83C446551BF9FAE200065AAC /* ViewController.m */; };
@@ -16,12 +17,11 @@
 		83C4466C1BF9FBF600065AAC /* RHMQTT.m in Sources */ = {isa = PBXBuildFile; fileRef = 83C446671BF9FBF600065AAC /* RHMQTT.m */; };
 		83F2FA4A1C7CA1D300758475 /* RHMQTTEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 83F2FA491C7CA1D300758475 /* RHMQTTEncoder.m */; };
 		83F2FA4D1C7CA1E200758475 /* RHMQTTDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 83F2FA4C1C7CA1E200758475 /* RHMQTTDecoder.m */; };
-		B3E1A609F5FCC7C795FEF45D /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E6B5F5EDC38FCAE46FBD21FF /* libPods.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		105057342BE873204D50C2EE /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
-		6618A994D48D969A4E833243 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		42EA541C4FD571A317E957D3 /* Pods-RHMQTTKitDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RHMQTTKitDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RHMQTTKitDemo/Pods-RHMQTTKitDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		69311776CAE2A73C96A62450 /* Pods-RHMQTTKitDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RHMQTTKitDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-RHMQTTKitDemo/Pods-RHMQTTKitDemo.release.xcconfig"; sourceTree = "<group>"; };
 		83C4464B1BF9FAE200065AAC /* RHMQTTKitDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RHMQTTKitDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		83C4464F1BF9FAE200065AAC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		83C446511BF9FAE200065AAC /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -38,7 +38,7 @@
 		83F2FA491C7CA1D300758475 /* RHMQTTEncoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RHMQTTEncoder.m; sourceTree = "<group>"; };
 		83F2FA4B1C7CA1E200758475 /* RHMQTTDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RHMQTTDecoder.h; sourceTree = "<group>"; };
 		83F2FA4C1C7CA1E200758475 /* RHMQTTDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RHMQTTDecoder.m; sourceTree = "<group>"; };
-		E6B5F5EDC38FCAE46FBD21FF /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		FE9A318ED4E03C7D18029D82 /* libPods-RHMQTTKitDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RHMQTTKitDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,7 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3E1A609F5FCC7C795FEF45D /* libPods.a in Frameworks */,
+				32EA50CFF73D221668F11622 /* libPods-RHMQTTKitDemo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,7 +56,7 @@
 		3D1D7B80482838CD42724940 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E6B5F5EDC38FCAE46FBD21FF /* libPods.a */,
+				FE9A318ED4E03C7D18029D82 /* libPods-RHMQTTKitDemo.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -121,8 +121,8 @@
 		B942A8773E406570646AF5C7 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				6618A994D48D969A4E833243 /* Pods.debug.xcconfig */,
-				105057342BE873204D50C2EE /* Pods.release.xcconfig */,
+				42EA541C4FD571A317E957D3 /* Pods-RHMQTTKitDemo.debug.xcconfig */,
+				69311776CAE2A73C96A62450 /* Pods-RHMQTTKitDemo.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -134,12 +134,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 83C446621BF9FAE200065AAC /* Build configuration list for PBXNativeTarget "RHMQTTKitDemo" */;
 			buildPhases = (
-				54DA4D34A04F5F00C988D100 /* Check Pods Manifest.lock */,
+				54DA4D34A04F5F00C988D100 /* 📦 Check Pods Manifest.lock */,
 				83C446471BF9FAE200065AAC /* Sources */,
 				83C446481BF9FAE200065AAC /* Frameworks */,
 				83C446491BF9FAE200065AAC /* Resources */,
-				97C3F855125F52164E088EFC /* Embed Pods Frameworks */,
-				8DA20444458AD5D161C979DA /* Copy Pods Resources */,
+				97C3F855125F52164E088EFC /* 📦 Embed Pods Frameworks */,
+				8DA20444458AD5D161C979DA /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -197,14 +197,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		54DA4D34A04F5F00C988D100 /* Check Pods Manifest.lock */ = {
+		54DA4D34A04F5F00C988D100 /* 📦 Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "📦 Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -212,34 +212,34 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		8DA20444458AD5D161C979DA /* Copy Pods Resources */ = {
+		8DA20444458AD5D161C979DA /* 📦 Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "📦 Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RHMQTTKitDemo/Pods-RHMQTTKitDemo-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		97C3F855125F52164E088EFC /* Embed Pods Frameworks */ = {
+		97C3F855125F52164E088EFC /* 📦 Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "📦 Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RHMQTTKitDemo/Pods-RHMQTTKitDemo-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -364,7 +364,7 @@
 		};
 		83C446631BF9FAE200065AAC /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6618A994D48D969A4E833243 /* Pods.debug.xcconfig */;
+			baseConfigurationReference = 42EA541C4FD571A317E957D3 /* Pods-RHMQTTKitDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = RHMQTTKitDemo/Info.plist;
@@ -376,7 +376,7 @@
 		};
 		83C446641BF9FAE200065AAC /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 105057342BE873204D50C2EE /* Pods.release.xcconfig */;
+			baseConfigurationReference = 69311776CAE2A73C96A62450 /* Pods-RHMQTTKitDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = RHMQTTKitDemo/Info.plist;
