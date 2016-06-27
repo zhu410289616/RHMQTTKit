@@ -511,6 +511,12 @@
     connect.payload.clientId = clientId;
     connect.payload.username = username;
     connect.payload.password = password;
+    if (username.length > 0) {
+        connect.variableHeader.connectFlags = connect.variableHeader.connectFlags | 0x80;
+    }
+    if (password.length > 0) {
+        connect.variableHeader.connectFlags = connect.variableHeader.connectFlags | 0x40;
+    }
     return connect;
 }
 
