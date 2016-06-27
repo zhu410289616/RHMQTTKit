@@ -183,7 +183,10 @@
     if (state && [state boolValue]) {
         _connectButton.hidden = YES;
         
-        RHMQTTConnect *req = [RHMQTT connectWithClientId:@"zrh" username:nil password:nil keepAlive:60 cleanSession:YES];
+        //需要在password_file.conf文件中设置帐号密码
+        NSString *username = @"testuser";
+        NSString *password = @"testuser";
+        RHMQTTConnect *req = [RHMQTT connectWithClientId:@"zrh" username:username password:password keepAlive:60 cleanSession:YES];
         [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
     } else {
         _connectButton.hidden = NO;
@@ -204,6 +207,10 @@
     switch (fixedHeader.type) {
         case RHMQTTMessageTypeConnAck: {
             NSLog(@"RHMQTTMessageTypeConnAck: %d", fixedHeader.type);
+        }
+            break;
+        case RHMQTTMessageTypePublish: {
+            NSLog(@"RHMQTTMessageTypePublish: %d", fixedHeader.type);
         }
             break;
         case RHMQTTMessageTypePubAck: {
