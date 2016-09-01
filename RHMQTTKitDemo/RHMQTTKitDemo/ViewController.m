@@ -130,12 +130,18 @@
     NSString *host = _hostTextField.text.length > 5 ? _hostTextField.text : @"127.0.0.1";
     int port = _portTextField.text.length > 1 ? [_portTextField.text intValue] : 1883;
     
+    RHSocketConnectParam *connectParam = [[RHSocketConnectParam alloc] init];
+    connectParam.host = host;
+    connectParam.port = port;
+    connectParam.heartbeatInterval = 5;
+    connectParam.autoReconnect = YES;
+    
     [RHSocketService sharedInstance].heartbeat = [[RHMQTTPingReq alloc] init];
-    [RHSocketService sharedInstance].autoReconnect = YES;
     
     [RHSocketService sharedInstance].encoder = [[RHMQTTEncoder alloc] init];
     [RHSocketService sharedInstance].decoder = [[RHMQTTDecoder alloc] init];
-    [[RHSocketService sharedInstance] startServiceWithHost:host port:port];
+    
+    [[RHSocketService sharedInstance] startServiceWithConnectParam:connectParam];
 }
 
 - (void)doSubscribeButtonAction

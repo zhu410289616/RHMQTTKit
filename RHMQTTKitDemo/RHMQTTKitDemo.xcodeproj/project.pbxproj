@@ -134,12 +134,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 83C446621BF9FAE200065AAC /* Build configuration list for PBXNativeTarget "RHMQTTKitDemo" */;
 			buildPhases = (
-				54DA4D34A04F5F00C988D100 /* 📦 Check Pods Manifest.lock */,
+				54DA4D34A04F5F00C988D100 /* [CP] Check Pods Manifest.lock */,
 				83C446471BF9FAE200065AAC /* Sources */,
 				83C446481BF9FAE200065AAC /* Frameworks */,
 				83C446491BF9FAE200065AAC /* Resources */,
-				97C3F855125F52164E088EFC /* 📦 Embed Pods Frameworks */,
-				8DA20444458AD5D161C979DA /* 📦 Copy Pods Resources */,
+				97C3F855125F52164E088EFC /* [CP] Embed Pods Frameworks */,
+				8DA20444458AD5D161C979DA /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -197,14 +197,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		54DA4D34A04F5F00C988D100 /* 📦 Check Pods Manifest.lock */ = {
+		54DA4D34A04F5F00C988D100 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -212,14 +212,14 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		8DA20444458AD5D161C979DA /* 📦 Copy Pods Resources */ = {
+		8DA20444458AD5D161C979DA /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -227,14 +227,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RHMQTTKitDemo/Pods-RHMQTTKitDemo-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		97C3F855125F52164E088EFC /* 📦 Embed Pods Frameworks */ = {
+		97C3F855125F52164E088EFC /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
