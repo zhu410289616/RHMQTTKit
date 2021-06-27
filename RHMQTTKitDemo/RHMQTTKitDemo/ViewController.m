@@ -52,14 +52,14 @@
     _hostTextField.frame = CGRectMake(20, 40, 200, 50);
     _hostTextField.borderStyle = UITextBorderStyleRoundedRect;
     _hostTextField.font = [UIFont systemFontOfSize:15];
-    _hostTextField.text = @"127.0.0.1";
+    _hostTextField.text = @"mq.tongxinmao.com";
     [self.view addSubview:_hostTextField];
     
     _portTextField = [[UITextField alloc] init];
     _portTextField.frame = CGRectMake(20, CGRectGetMaxY(_hostTextField.frame) + 10, 200, 50);
     _portTextField.borderStyle = UITextBorderStyleRoundedRect;
     _portTextField.font = [UIFont systemFontOfSize:15];
-    _portTextField.text = @"1883";
+    _portTextField.text = @"18830";
     [self.view addSubview:_portTextField];
     
     _connectButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -193,8 +193,8 @@
         _connectButton.hidden = YES;
         
         //需要在password_file.conf文件中设置帐号密码
-        NSString *username = @"testuser";
-        NSString *password = @"testuser";
+        NSString *username = @"";//@"testuser";
+        NSString *password = @"";//@"testuser";
         RHMQTTConnect *req = [RHMQTT connectWithClientId:@"zrh" username:username password:password keepAlive:60 cleanSession:YES];
         [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
     } else {

@@ -8,7 +8,7 @@
 
 #import "RHMQTTEncoder.h"
 #import "RHMQTT.h"
-#import "RHSocketConfig.h"
+#import "RHSocketMacros.h"
 
 @implementation RHMQTTEncoder
 

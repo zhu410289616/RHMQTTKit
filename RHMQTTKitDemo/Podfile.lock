@@ -1,0 +1,31 @@
+PODS:
+  - CocoaAsyncSocket (7.6.5)
+  - RHSocketKit/Core (2.3.0):
+    - CocoaAsyncSocket
+  - RHSocketKit/Extend (2.3.0):
+    - RHSocketKit/Core
+
+DEPENDENCIES:
+  - RHSocketKit/Extend (from `https://github.com/zhu410289616/RHSocketKit.git`, tag `2.3.6`)
+
+SPEC REPOS:
+  trunk:
+    - CocoaAsyncSocket
+
+EXTERNAL SOURCES:
+  RHSocketKit:
+    :git: https://github.com/zhu410289616/RHSocketKit.git
+    :tag: 2.3.6
+
+CHECKOUT OPTIONS:
+  RHSocketKit:
+    :git: https://github.com/zhu410289616/RHSocketKit.git
+    :tag: 2.3.6
+
+SPEC CHECKSUMS:
+  CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
+  RHSocketKit: f25606cece9e695cd3fc22a04d8308b1e2f9e572
+
+PODFILE CHECKSUM: 6a77502e0e86b8d5e0c5bf5dabf49834e1e90de6
+
+COCOAPODS: 1.9.1
