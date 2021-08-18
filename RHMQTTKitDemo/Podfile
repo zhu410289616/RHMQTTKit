@@ -2,4 +2,5 @@ platform:ios,'9.0'
 
 target 'RHMQTTKitDemo' do
 	pod 'RHSocketKit/Extend', :git=> 'https://github.com/zhu410289616/RHSocketKit.git', :tag => '2.3.6'
+	pod 'RHMQTTKit', :path => '../RHMQTTKit.podspec'
 end

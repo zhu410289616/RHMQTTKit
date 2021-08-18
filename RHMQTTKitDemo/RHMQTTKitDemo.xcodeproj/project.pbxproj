@@ -14,9 +14,6 @@
 		83C446591BF9FAE200065AAC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 83C446571BF9FAE200065AAC /* Main.storyboard */; };
 		83C4465B1BF9FAE200065AAC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 83C4465A1BF9FAE200065AAC /* Assets.xcassets */; };
 		83C4465E1BF9FAE200065AAC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 83C4465C1BF9FAE200065AAC /* LaunchScreen.storyboard */; };
-		83C4466C1BF9FBF600065AAC /* RHMQTT.m in Sources */ = {isa = PBXBuildFile; fileRef = 83C446671BF9FBF600065AAC /* RHMQTT.m */; };
-		83F2FA4A1C7CA1D300758475 /* RHMQTTEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 83F2FA491C7CA1D300758475 /* RHMQTTEncoder.m */; };
-		83F2FA4D1C7CA1E200758475 /* RHMQTTDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 83F2FA4C1C7CA1E200758475 /* RHMQTTDecoder.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,12 +29,6 @@
 		83C4465A1BF9FAE200065AAC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		83C4465D1BF9FAE200065AAC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		83C4465F1BF9FAE200065AAC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		83C446661BF9FBF600065AAC /* RHMQTT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RHMQTT.h; sourceTree = "<group>"; };
-		83C446671BF9FBF600065AAC /* RHMQTT.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RHMQTT.m; sourceTree = "<group>"; };
-		83F2FA481C7CA1D300758475 /* RHMQTTEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RHMQTTEncoder.h; sourceTree = "<group>"; };
-		83F2FA491C7CA1D300758475 /* RHMQTTEncoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RHMQTTEncoder.m; sourceTree = "<group>"; };
-		83F2FA4B1C7CA1E200758475 /* RHMQTTDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RHMQTTDecoder.h; sourceTree = "<group>"; };
-		83F2FA4C1C7CA1E200758475 /* RHMQTTDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RHMQTTDecoder.m; sourceTree = "<group>"; };
 		FE9A318ED4E03C7D18029D82 /* libPods-RHMQTTKitDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RHMQTTKitDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -82,7 +73,6 @@
 		83C4464D1BF9FAE200065AAC /* RHMQTTKitDemo */ = {
 			isa = PBXGroup;
 			children = (
-				83C446651BF9FBF600065AAC /* RHMQTTKit */,
 				83C446511BF9FAE200065AAC /* AppDelegate.h */,
 				83C446521BF9FAE200065AAC /* AppDelegate.m */,
 				83C446541BF9FAE200065AAC /* ViewController.h */,
@@ -102,20 +92,6 @@
 				83C4464F1BF9FAE200065AAC /* main.m */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		83C446651BF9FBF600065AAC /* RHMQTTKit */ = {
-			isa = PBXGroup;
-			children = (
-				83C446661BF9FBF600065AAC /* RHMQTT.h */,
-				83C446671BF9FBF600065AAC /* RHMQTT.m */,
-				83F2FA481C7CA1D300758475 /* RHMQTTEncoder.h */,
-				83F2FA491C7CA1D300758475 /* RHMQTTEncoder.m */,
-				83F2FA4B1C7CA1E200758475 /* RHMQTTDecoder.h */,
-				83F2FA4C1C7CA1E200758475 /* RHMQTTDecoder.m */,
-			);
-			name = RHMQTTKit;
-			path = ../../RHMQTTKit;
 			sourceTree = "<group>";
 		};
 		B942A8773E406570646AF5C7 /* Pods */ = {
@@ -138,8 +114,6 @@
 				83C446471BF9FAE200065AAC /* Sources */,
 				83C446481BF9FAE200065AAC /* Frameworks */,
 				83C446491BF9FAE200065AAC /* Resources */,
-				97C3F855125F52164E088EFC /* [CP] Embed Pods Frameworks */,
-				8DA20444458AD5D161C979DA /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -170,6 +144,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -203,43 +178,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-RHMQTTKitDemo-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		8DA20444458AD5D161C979DA /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RHMQTTKitDemo/Pods-RHMQTTKitDemo-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		97C3F855125F52164E088EFC /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RHMQTTKitDemo/Pods-RHMQTTKitDemo-frameworks.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -252,9 +200,6 @@
 				83C446561BF9FAE200065AAC /* ViewController.m in Sources */,
 				83C446531BF9FAE200065AAC /* AppDelegate.m in Sources */,
 				83C446501BF9FAE200065AAC /* main.m in Sources */,
-				83F2FA4A1C7CA1D300758475 /* RHMQTTEncoder.m in Sources */,
-				83C4466C1BF9FBF600065AAC /* RHMQTT.m in Sources */,
-				83F2FA4D1C7CA1E200758475 /* RHMQTTDecoder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
