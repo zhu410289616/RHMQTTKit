@@ -149,6 +149,16 @@
     return self;
 }
 
+- (instancetype)initWithObject:(id)aObject
+{
+    if (self = [super initWithObject:aObject]) {
+        _fixedHeader = [[RHMQTTFixedHeader alloc] init];
+        _variableHeader = [[RHMQTTVariableHeader alloc] init];
+        _payload = [[RHMQTTPayload alloc] init];
+    }
+    return self;
+}
+
 - (NSData *)dataWithFixedHeader
 {
     NSMutableData *buffer = [[NSMutableData alloc] init];

@@ -7,6 +7,7 @@
 //
 
 #import "RHMQTTDecoder.h"
+#import "RHMQTTPacket.h"
 
 @implementation RHMQTTDecoder
 
@@ -20,6 +21,7 @@
         NSData *lenData = [downstreamData subdataWithRange:NSMakeRange(headIndex, 1 + lengthMultiplier)];
         
         //剩余长度remainingLength（1-4个字节，可变）
+        //可变头部内容字节长度 + Playload/负荷字节长度 = 剩余长度
         NSUInteger remainingLength = 0;
         UInt8 digit = 0;
         [lenData getBytes:&digit range:NSMakeRange(lengthMultiplier, 1)];
@@ -38,8 +40,8 @@
             break;
         }
         NSData *frameData = [downstreamData subdataWithRange:NSMakeRange(headIndex, remainingLength + 2)];
-        RHSocketPacketResponse *frame = [[RHSocketPacketResponse alloc] initWithObject:frameData];
-        [output didDecode:frame];
+        RHMQTTPacket *packet = [[RHMQTTPacket alloc] initWithObject:frameData];
+        [output didDecode:packet];
         headIndex += remainingLength + 2;
     }
     return headIndex;

@@ -7,7 +7,7 @@
 //
 
 #import "RHMQTTEncoder.h"
-#import "RHMQTT.h"
+#import "RHMQTTPacket.h"
 
 @implementation RHMQTTEncoder
 

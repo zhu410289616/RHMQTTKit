@@ -104,6 +104,10 @@
             RHSocketLog(@"RHMQTTMessageTypePublish: %d", fixedHeader.type);
             RHMQTTPublish *publish = [[RHMQTTPublish alloc] initWithObject:buffer];
             RHSocketLog(@"publish payload: %@", [publish dataWithPayload]);
+            
+            RHMQTTPublish *pubRec = [[RHMQTTPublish alloc] init];
+            pubRec.fixedHeader.type = RHMQTTMessageTypePubRec;
+//            pubRec.fixedHeader.
         }
             break;
         case RHMQTTMessageTypeSubAck:
