@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "RHSocketCodecProtocol.h"
+#import <RHSocketKit/RHSocketKit.h>
 
 @interface RHMQTTEncoder : NSObject <RHSocketEncoderProtocol>
 

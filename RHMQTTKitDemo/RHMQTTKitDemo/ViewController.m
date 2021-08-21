@@ -8,6 +8,8 @@
 
 #import "ViewController.h"
 
+#import <RHMQTTKit/RHMQTT.h>
+
 //RHSocket
 #import "RHSocketService.h"
 //MQTT
@@ -15,7 +17,7 @@
 #import "RHMQTTDecoder.h"
 #import "RHMQTT.h"
 
-@interface ViewController ()
+@interface ViewController () <RHSocketChannelDelegate>
 {
     UITextField *_hostTextField;
     UITextField *_portTextField;
@@ -26,7 +28,11 @@
     UIButton *_unsubscribeButton;
     UIButton *_pingReqButton;
     UIButton *_publishButton;
+    
+    UITextView *_receivedTextView;
 }
+
+@property (nonatomic, strong) RHMQTTClient *mqttClient;
 
 @end
 
@@ -35,13 +41,8 @@
 - (void)loadView
 {
     [super loadView];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(detectSocketServiceState:) name:kNotificationSocketServiceState object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(detectSocketResponseData:) name:kNotificationSocketPacketResponse object:nil];
-}
-
-- (void)dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    self.mqttClient = [[RHMQTTClient alloc] init];
+    [self.mqttClient addDelegate:self];
 }
 
 - (void)viewDidLoad {
@@ -123,170 +124,183 @@
     [_publishButton addTarget:self action:@selector(doPublishButtonAction) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_publishButton];
     
+    CGFloat x = CGRectGetMinX(_connectButton.frame);
+    CGFloat y = CGRectGetMaxY(_pingReqButton.frame) + 20;
+    CGFloat width = CGRectGetWidth(self.view.frame) - x - x;
+    CGFloat height = CGRectGetHeight(self.view.frame) - y - 60;
+    _receivedTextView = [[UITextView alloc] init];
+    _receivedTextView.frame = CGRectMake(x, y, width, height);
+    _receivedTextView.layer.borderColor = [UIColor blackColor].CGColor;
+    _receivedTextView.layer.borderWidth = 0.5f;
+    _receivedTextView.layer.masksToBounds = YES;
+    _receivedTextView.font = [UIFont systemFontOfSize:20];
+    _receivedTextView.text = @"MQTT Log:\n";
+    [self.view addSubview:_receivedTextView];
 }
 
 - (void)doConnectButtonAction
 {
     NSString *host = _hostTextField.text.length > 5 ? _hostTextField.text : @"127.0.0.1";
     int port = _portTextField.text.length > 1 ? [_portTextField.text intValue] : 1883;
-    
-    RHSocketConnectParam *connectParam = [[RHSocketConnectParam alloc] init];
-    connectParam.host = host;
-    connectParam.port = port;
-    connectParam.heartbeatInterval = 5;
-    connectParam.autoReconnect = YES;
-    
-    [RHSocketService sharedInstance].heartbeat = [[RHMQTTPingReq alloc] init];
-    
-    [RHSocketService sharedInstance].encoder = [[RHMQTTEncoder alloc] init];
-    [RHSocketService sharedInstance].decoder = [[RHMQTTDecoder alloc] init];
-    
-    [[RHSocketService sharedInstance] startServiceWithConnectParam:connectParam];
+    [self.mqttClient startWithHost:host port:port];
 }
 
 - (void)doSubscribeButtonAction
 {
+    NSString *topic = @"MQTT/Messenger/#";
+    [self showCommand:@"Subscribe" log:topic];
+    
     //finance/stock/#   finance/sotkc/ibm/+
-    RHMQTTSubscribe *req = [RHMQTT subscribeWithMessageId:3 topic:@"MQTTMessenger" qos:1];
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
+    RHMQTTSubscribe *req = [RHMQTTSubscribe subscribeWithMessageId:3 topic:topic qos:1];
+    [self.mqttClient asyncSendPacket:req];
 }
 
 - (void)doPingButtonAction
 {
+    [self showCommand:@"ping" log:@""];
+    
     RHMQTTPingReq *req = [[RHMQTTPingReq alloc] init];
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
+    [self.mqttClient asyncSendPacket:req];
 }
 
 - (void)doDisconnectButtonAction
 {
+    [self showCommand:@"Disconnect" log:@""];
+    
     RHMQTTDisconnect *req = [[RHMQTTDisconnect alloc] init];
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
+    [self.mqttClient asyncSendPacket:req];
 }
 
 - (void)doUnsubscribeButtonAction
 {
-    RHMQTTUnsubscribe *req = [RHMQTT unsubscribeWithMessageId:22 topic:@"MQTTMessenger"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
+    NSString *topic = @"MQTT/Messenger/#";
+    [self showCommand:@"Unsubscribe" log:topic];
+    
+    RHMQTTUnsubscribe *req = [RHMQTTUnsubscribe unsubscribeWithMessageId:22 topic:topic];
+    [self.mqttClient asyncSendPacket:req];
 }
 
 - (void)doPublishButtonAction
 {
+    NSString *topic = @"MQTT/Messenger/rh";
+    [self showCommand:@"Publish" log:topic];
+    
     RHMQTTPublish *req = [[RHMQTTPublish alloc] init];
     req.fixedHeader.qos = RHMQTTQosLevelAtLeastOnce;//RHMQTTQosLevelExactlyOnce
-    req.variableHeader.topic = @"MQTTMessenger";
+    req.variableHeader.topic = topic;
     req.variableHeader.messageId = 99;
     req.payload.message = [@"test publish" dataUsingEncoding:NSUTF8StringEncoding];
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
+    [self.mqttClient asyncSendPacket:req];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-- (void)detectSocketServiceState:(NSNotification *)notif
+- (void)showCommand:(NSString *)command log:(NSString *)log
 {
-    NSLog(@"detectSocketServiceState: %@", notif);
-    
-    id state = notif.object;
-    if (state && [state boolValue]) {
-        _connectButton.hidden = YES;
-        
-        //需要在password_file.conf文件中设置帐号密码
-        NSString *username = @"";//@"testuser";
-        NSString *password = @"";//@"testuser";
-        RHMQTTConnect *req = [RHMQTT connectWithClientId:@"zrh" username:username password:password keepAlive:60 cleanSession:YES];
-        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
-    } else {
-        _connectButton.hidden = NO;
-    }//if
+    NSMutableString *logStr = [NSMutableString string];
+    [logStr appendFormat:@"%@\n", _receivedTextView.text];
+    [logStr appendFormat:@"%@: %@\n", command, log];
+    _receivedTextView.text = logStr;
 }
 
-- (void)detectSocketResponseData:(NSNotification *)notif
+#pragma mark - RHSocketChannelDelegate
+
+- (void)channelOpened:(RHSocketChannel *)channel host:(NSString *)host port:(int)port
 {
-    NSLog(@"detectSocketResponseData: %@", notif);
+    _connectButton.hidden = YES;
     
-    RHSocketPacketResponse *frame = notif.userInfo[@"RHSocketPacket"];
-    NSLog(@"RHPacketFrame: %@", [frame object]);
+    NSString *topic = [NSString stringWithFormat:@"%@:%@", host, @(port)];
+    [self showCommand:@"Connected" log:topic];
+}
+
+- (void)channelClosed:(RHSocketChannel *)channel error:(NSError *)error
+{
+    _connectButton.hidden = NO;
+    
+    NSString *topic = [NSString stringWithFormat:@"%@", error];
+    [self showCommand:@"Disconnect" log:topic];
+}
+
+- (void)channel:(RHSocketChannel *)channel received:(id<RHDownstreamPacket>)packet
+{
+    RHSocketLog(@"[RHMQTT] received: %@", packet);
+    
+    RHSocketPacketResponse *frame = (RHSocketPacketResponse *)packet;
+    RHSocketLog(@"[RHMQTT] RHPacketFrame: %@", [frame object]);
     
     NSData *buffer = [frame object];
     UInt8 header = 0;
     [buffer getBytes:&header range:NSMakeRange(0, 1)];
     RHMQTTFixedHeader *fixedHeader = [[RHMQTTFixedHeader alloc] initWithByte:header];
     switch (fixedHeader.type) {
-        case RHMQTTMessageTypeConnAck: {
-            NSLog(@"RHMQTTMessageTypeConnAck: %d", fixedHeader.type);
+        case RHMQTTMessageTypeConnAck:
+        {
+            RHSocketLog(@"RHMQTTMessageTypeConnAck: %d", fixedHeader.type);
+            NSString *topic = [RHSocketUtils hexStringFromData:buffer];
+            [self showCommand:@"ReceivedData ConnAck" log:topic];
         }
             break;
         case RHMQTTMessageTypePublish: {
-            NSLog(@"RHMQTTMessageTypePublish: %d", fixedHeader.type);
+            RHSocketLog(@"RHMQTTMessageTypePublish: %d", fixedHeader.type);
+            NSString *topic = [RHSocketUtils hexStringFromData:buffer];
+            [self showCommand:@"ReceivedData Publish" log:topic];
+            
+            RHMQTTPublish *publish = [[RHMQTTPublish alloc] initWithObject:buffer];
+            RHSocketLog(@"publish payload: %@", [publish dataWithPayload]);
         }
             break;
         case RHMQTTMessageTypePubAck: {
             //qos = RHMQTTQosLevelAtLeastOnce
-            NSLog(@"RHMQTTMessageTypePubAck: %d", fixedHeader.type);
+            RHSocketLog(@"RHMQTTMessageTypePubAck: %d", fixedHeader.type);
+            NSString *topic = [RHSocketUtils hexStringFromData:buffer];
+            [self showCommand:@"ReceivedData PubAck" log:topic];
+            
             UInt16 msgId = [[buffer subdataWithRange:NSMakeRange(2, 2)] valueWithBytes];
             NSLog(@"msgId: %d, ", msgId);
         }
             break;
         case RHMQTTMessageTypePubRec: {
             //qos = RHMQTTQosLevelExactlyOnce
-            NSLog(@"RHMQTTMessageTypePubRec: %d", fixedHeader.type);
+            RHSocketLog(@"RHMQTTMessageTypePubRec: %d", fixedHeader.type);
+            NSString *topic = [RHSocketUtils hexStringFromData:buffer];
+            [self showCommand:@"ReceivedData PubRec" log:topic];
+            
             UInt16 msgId = [[buffer subdataWithRange:NSMakeRange(2, 2)] valueWithBytes];
-            NSLog(@"msgId: %d, ", msgId);
+            RHSocketLog(@"msgId: %d, ", msgId);
         }
             break;
         case RHMQTTMessageTypePubRel: {
-            NSLog(@"RHMQTTMessageTypePubRel: %d", fixedHeader.type);
+            RHSocketLog(@"RHMQTTMessageTypePubRel: %d", fixedHeader.type);
+            NSString *topic = [RHSocketUtils hexStringFromData:buffer];
+            [self showCommand:@"ReceivedData PubRel" log:topic];
         }
             break;
         case RHMQTTMessageTypePubComp: {
-            NSLog(@"RHMQTTMessageTypePubComp: %d", fixedHeader.type);
+            RHSocketLog(@"RHMQTTMessageTypePubComp: %d", fixedHeader.type);
+            NSString *topic = [RHSocketUtils hexStringFromData:buffer];
+            [self showCommand:@"ReceivedData PubComp" log:topic];
         }
             break;
-        case RHMQTTMessageTypeSubAck: {
+        case RHMQTTMessageTypeSubAck:
+        {
+            RHSocketLog(@"RHMQTTMessageTypeSubAck: %d", fixedHeader.type);
+            NSString *topic = [RHSocketUtils hexStringFromData:buffer];
+            [self showCommand:@"ReceivedData SubAck" log:topic];
+            
             UInt16 msgId = [[buffer subdataWithRange:NSMakeRange(2, 2)] valueWithBytes];
             UInt8 grantedQos = [[buffer subdataWithRange:NSMakeRange(4, 1)] valueFromByte];
-            NSLog(@"msgId: %d, grantedQos: %d", msgId, grantedQos);
-            
-            //
-//            RHMQTTUnsubscribe *req = [RHMQTT unsubscribeWithMessageId:msgId + 1 topic:@"MQTTMessenger"];
-//            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
-            
-            //
-            RHMQTTPingReq *req = [[RHMQTTPingReq alloc] init];
-//            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
+            RHSocketLog(@"msgId: %d, grantedQos: %d", msgId, grantedQos);
         }
             break;
-        case RHMQTTMessageTypeUnsubAck: {
-            UInt16 msgId = [[buffer subdataWithRange:NSMakeRange(2, 2)] valueWithBytes];
-            NSLog(@"msgId: %d, ", msgId);
-            
-            RHMQTTPingReq *req = [[RHMQTTPingReq alloc] init];
-//            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
-        }
-            break;
-        case RHMQTTMessageTypePingResp: {
-            NSLog(@"RHMQTTMessageTypePingResp: %d", fixedHeader.type);
-            
-            //test disconnect
-            //            RHMQTTDisconnect *req = [[RHMQTTDisconnect alloc] init];
-            //            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
-            
-            //publish
-            RHMQTTPublish *req = [[RHMQTTPublish alloc] init];
-            req.fixedHeader.qos = RHMQTTQosLevelAtLeastOnce;//RHMQTTQosLevelExactlyOnce
-            req.variableHeader.topic = @"MQTTMessenger";
-            req.variableHeader.messageId = 99;
-            req.payload.message = [@"test publish" dataUsingEncoding:NSUTF8StringEncoding];
-//            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationSocketPacketRequest object:req];
+        case RHMQTTMessageTypePingResp:
+        {
+            RHSocketLog(@"RHMQTTMessageTypePingResp: %d", fixedHeader.type);
+            NSString *topic = [RHSocketUtils hexStringFromData:buffer];
+            [self showCommand:@"ReceivedData PingResp" log:topic];
         }
             break;
             
         default:
             break;
     }
-    
 }
 
 @end
