@@ -8,6 +8,7 @@
 
 #import "RHMQTTEncoder.h"
 #import "RHMQTTPacket.h"
+#import "RHSocketUtils.h"
 
 @implementation RHMQTTEncoder
 
@@ -19,7 +20,7 @@
     
     NSTimeInterval timeout = [upstreamPacket timeout];
     
-    RHSocketLog(@" timeout: %f, data: %@", timeout, sendData);
+    RHSocketLog(@"[encode] timeout: %f, data: %@", timeout, [RHSocketUtils hexStringFromData:sendData]);
     [output didEncode:sendData timeout:timeout];
 }
 

@@ -27,11 +27,6 @@
     return self;
 }
 
-- (void)addDelegate:(id<RHSocketChannelDelegate>)delegate
-{
-    [self.tcpChannel.channel addDelegate:delegate];
-}
-
 - (void)startWithHost:(NSString *)host port:(int)port
 {
     self.connectParam = [[RHSocketConnectParam alloc] init];
@@ -102,12 +97,33 @@
             break;
         case RHMQTTMessageTypePublish: {
             RHSocketLog(@"RHMQTTMessageTypePublish: %d", fixedHeader.type);
+            RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] initWithData:buffer];
+            int16_t topicLength = [byteBuffer readInt16:2 endianSwap:YES];
+            RHMQTTVariableHeader *variableHeader = [[RHMQTTVariableHeader alloc] init];
+            variableHeader.topic = [byteBuffer readString:2+2 length:topicLength];
+            variableHeader.messageId = [byteBuffer readInt16:2+2+topicLength endianSwap:YES];
             RHMQTTPublish *publish = [[RHMQTTPublish alloc] initWithObject:buffer];
-            RHSocketLog(@"publish payload: %@", [publish dataWithPayload]);
+            publish.fixedHeader = fixedHeader;
+            publish.variableHeader = variableHeader;
             
-            RHMQTTPublish *pubRec = [[RHMQTTPublish alloc] init];
-            pubRec.fixedHeader.type = RHMQTTMessageTypePubRec;
-//            pubRec.fixedHeader.
+            /**
+             兄弟，针对QoS2，为了便于说明，我们先假设一个方向，Server -> Client：
+             ----PUBLISH--->
+             <----PUBREC----
+             ----PUBREL---->
+             <----PUBCOMP---
+             */
+            [self.delegate channel:channel received:publish];
+        }
+            break;
+        case RHMQTTMessageTypePubAck: {
+            RHSocketLog(@"RHMQTTMessageTypePubAck: %d", fixedHeader.type);
+            RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] initWithData:buffer];
+            RHMQTTVariableHeader *variableHeader = [[RHMQTTVariableHeader alloc] init];
+            variableHeader.messageId = [byteBuffer readInt16:2 endianSwap:YES];
+            RHMQTTPublish *publish = [[RHMQTTPublish alloc] init];
+            publish.fixedHeader = fixedHeader;
+            publish.variableHeader = variableHeader;
         }
             break;
         case RHMQTTMessageTypeSubAck:

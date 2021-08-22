@@ -88,6 +88,8 @@
 
 @implementation RHMQTTVariableHeader
 
+@synthesize object = _object;
+
 - (instancetype)init
 {
     if (self = [super init]) {
@@ -95,6 +97,14 @@
         _version = 3;
         _connectFlags = 0x02;
         _keepAlive = 60;
+    }
+    return self;
+}
+
+- (instancetype)initWithObject:(id)aObject
+{
+    if (self = [super init]) {
+        _object = aObject;
     }
     return self;
 }
@@ -142,16 +152,6 @@
 - (instancetype)init
 {
     if (self = [super init]) {
-        _fixedHeader = [[RHMQTTFixedHeader alloc] init];
-        _variableHeader = [[RHMQTTVariableHeader alloc] init];
-        _payload = [[RHMQTTPayload alloc] init];
-    }
-    return self;
-}
-
-- (instancetype)initWithObject:(id)aObject
-{
-    if (self = [super initWithObject:aObject]) {
         _fixedHeader = [[RHMQTTFixedHeader alloc] init];
         _variableHeader = [[RHMQTTVariableHeader alloc] init];
         _payload = [[RHMQTTPayload alloc] init];
@@ -292,16 +292,6 @@
     if (self = [super init]) {
         self.fixedHeader.type = RHMQTTMessageTypePublish;
         self.fixedHeader.qos = RHMQTTQosLevelAtLeastOnce;
-    }
-    return self;
-}
-
-- (instancetype)initWithObject:(id)aObject
-{
-    if (self = [super initWithObject:aObject]) {
-        RHSocketByteBuf *byteBuf = [[RHSocketByteBuf alloc] initWithData:aObject];
-        self.fixedHeader = [[RHMQTTFixedHeader alloc] initWithByte:[byteBuf readInt8:0]];
-        self.variableHeader = [[RHMQTTVariableHeader alloc] init];
     }
     return self;
 }

@@ -42,7 +42,7 @@
 {
     [super loadView];
     self.mqttClient = [[RHMQTTClient alloc] init];
-    [self.mqttClient addDelegate:self];
+    self.mqttClient.delegate = self;
 }
 
 - (void)viewDidLoad {

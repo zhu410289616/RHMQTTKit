@@ -84,7 +84,7 @@ typedef NS_ENUM(UInt8, RHMQTTQosLevel) {
 #pragma mark - RHMQTTVariableHeader
 
 /** Variable header/可变头部 */
-@interface RHMQTTVariableHeader : NSObject
+@interface RHMQTTVariableHeader : NSObject <RHSocketPacket>
 
 /** protocol name */
 @property (nonatomic, strong) NSString *name;
@@ -176,6 +176,12 @@ typedef NS_ENUM(UInt8, RHMQTTQosLevel) {
 
 @interface RHMQTTPacket : RHSocketPacketRequest
 
+/** 剩余长度 remainingLength 的二进制数据（1-4个字节，可变） */
+@property (nonatomic, strong) NSData *remainingLengthData;
+/** 剩余长度 = 可变头部内容字节长度 + Playload/负荷字节长度 */
+@property (nonatomic, assign) NSInteger remainingLength;
+
+/** 1 个字节 */
 @property (nonatomic, strong) RHMQTTFixedHeader *fixedHeader;
 @property (nonatomic, strong) RHMQTTVariableHeader *variableHeader;
 @property (nonatomic, strong) RHMQTTPayload *payload;

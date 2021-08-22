@@ -11,7 +11,7 @@
 
 @interface RHMQTTClient : NSObject
 
-- (void)addDelegate:(id<RHSocketChannelDelegate>)delegate;
+@property (nonatomic, weak) id<RHSocketChannelDelegate> delegate;
 
 - (void)startWithHost:(NSString *)host port:(int)port;
 - (void)stop;
