@@ -81,13 +81,16 @@
 
 - (void)channel:(RHSocketChannel *)channel received:(id<RHDownstreamPacket>)packet
 {
-    RHSocketPacketResponse *frame = (RHSocketPacketResponse *)packet;
-    RHSocketLog(@"[RHMQTT] RHPacketFrame: %@", [frame object]);
+    if (![packet isKindOfClass:[RHMQTTPacket class]]) {
+        RHSocketLog(@"[RHMQTT] packet(%@) is not kind of RHMQTTPacket", NSStringFromClass([packet class]));
+        return;
+    }
     
-    NSData *buffer = [frame object];
-    UInt8 header = 0;
-    [buffer getBytes:&header range:NSMakeRange(0, 1)];
-    RHMQTTFixedHeader *fixedHeader = [[RHMQTTFixedHeader alloc] initWithByte:header];
+    RHMQTTPacket *mqttPacket = (RHMQTTPacket *)packet;
+    RHSocketLog(@"[RHMQTT] mqttPacket object: %@", [mqttPacket object]);
+    
+    NSData *buffer = mqttPacket.object;
+    RHMQTTFixedHeader *fixedHeader = mqttPacket.fixedHeader;
     switch (fixedHeader.type) {
         case RHMQTTMessageTypeConnAck:
         {
@@ -113,7 +116,19 @@
              ----PUBREL---->
              <----PUBCOMP---
              */
-            [self.delegate channel:channel received:publish];
+            if (fixedHeader.qos == RHMQTTQosLevelAtLeastOnce) {
+                /**
+                 作为订阅者/服务器接收（QoS level = 1）PUBLISH消息之后对发送者的响应。
+                 */
+                RHMQTTPublishAck *publishAck = [[RHMQTTPublishAck alloc] initWithMessageId:variableHeader.messageId];
+                [self asyncSendPacket:publishAck];
+            } else if (fixedHeader.qos == RHMQTTQosLevelExactlyOnce) {
+                /**
+                 作为订阅者/服务器对QoS level = 2的发布PUBLISH消息的发送方的响应，确认已经收到，为QoS level = 2消息流的第二个消息。 和PUBACK相比，除了消息类型不同外，其它都是一样。
+                 */
+                RHMQTTPublishRec *publishRec = [[RHMQTTPublishRec alloc] initWithMessageId:variableHeader.messageId];
+                [self asyncSendPacket:publishRec];
+            }
         }
             break;
         case RHMQTTMessageTypePubAck: {
@@ -126,6 +141,14 @@
             publish.variableHeader = variableHeader;
         }
             break;
+        case RHMQTTMessageTypePubRec:
+        {
+            //qos = RHMQTTQosLevelExactlyOnce
+            RHSocketLog(@"RHMQTTMessageTypePubRec: %d", fixedHeader.type);
+            UInt16 msgId = [[buffer subdataWithRange:NSMakeRange(2, 2)] valueWithBytes];
+            RHSocketLog(@"msgId: %d, ", msgId);
+        }
+            break;
         case RHMQTTMessageTypeSubAck:
         {
             UInt16 msgId = [[buffer subdataWithRange:NSMakeRange(2, 2)] valueWithBytes];
@@ -136,14 +159,6 @@
         case RHMQTTMessageTypePingResp:
         {
             RHSocketLog(@"RHMQTTMessageTypePingResp: %d", fixedHeader.type);
-        }
-            break;
-        case RHMQTTMessageTypePubRec:
-        {
-            //qos = RHMQTTQosLevelExactlyOnce
-            RHSocketLog(@"RHMQTTMessageTypePubRec: %d", fixedHeader.type);
-            UInt16 msgId = [[buffer subdataWithRange:NSMakeRange(2, 2)] valueWithBytes];
-            RHSocketLog(@"msgId: %d, ", msgId);
         }
             break;
             

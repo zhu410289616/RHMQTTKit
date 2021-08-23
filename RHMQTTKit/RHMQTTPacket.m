@@ -348,6 +348,94 @@
 
 @end
 
+@implementation RHMQTTPublishAck
+
+- (instancetype)initWithMessageId:(int16_t)msgId
+{
+    if (self = [super init]) {
+        self.fixedHeader.type = RHMQTTMessageTypePubAck;
+        self.variableHeader.messageId = msgId;
+    }
+    return self;
+}
+
+- (NSData *)data
+{
+    RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] init];
+    [byteBuffer writeData:[self dataWithFixedHeader]];
+    [byteBuffer writeInt8:2];
+    [byteBuffer writeInt16:self.variableHeader.messageId];
+    return [byteBuffer data];
+}
+
+@end
+
+@implementation RHMQTTPublishRec
+
+- (instancetype)initWithMessageId:(int16_t)msgId
+{
+    if (self = [super init]) {
+        self.fixedHeader.type = RHMQTTMessageTypePubRec;
+        self.variableHeader.messageId = msgId;
+    }
+    return self;
+}
+
+- (NSData *)data
+{
+    RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] init];
+    [byteBuffer writeData:[self dataWithFixedHeader]];
+    [byteBuffer writeInt8:2];
+    [byteBuffer writeInt16:self.variableHeader.messageId];
+    return [byteBuffer data];
+}
+
+@end
+
+@implementation RHMQTTPublishRel
+
+- (instancetype)initWithMessageId:(int16_t)msgId
+{
+    if (self = [super init]) {
+        self.fixedHeader.type = RHMQTTMessageTypePubRel;
+        self.variableHeader.messageId = msgId;
+    }
+    return self;
+}
+
+- (NSData *)data
+{
+    RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] init];
+    [byteBuffer writeData:[self dataWithFixedHeader]];
+    [byteBuffer writeInt8:2];
+    [byteBuffer writeInt16:self.variableHeader.messageId];
+    return [byteBuffer data];
+}
+
+@end
+
+@implementation RHMQTTPublishComp
+
+- (instancetype)initWithMessageId:(int16_t)msgId
+{
+    if (self = [super init]) {
+        self.fixedHeader.type = RHMQTTMessageTypePubComp;
+        self.variableHeader.messageId = msgId;
+    }
+    return self;
+}
+
+- (NSData *)data
+{
+    RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] init];
+    [byteBuffer writeData:[self dataWithFixedHeader]];
+    [byteBuffer writeInt8:2];
+    [byteBuffer writeInt16:self.variableHeader.messageId];
+    return [byteBuffer data];
+}
+
+@end
+
 // ------------------------------------------
 
 #pragma mark - RHMQTTSubscribe
@@ -518,7 +606,7 @@
 
 - (NSData *)data
 {
-    NSMutableData *buffer = [NSMutableData dataWithData:[super data]];
+    NSMutableData *buffer = [NSMutableData dataWithData:[self dataWithFixedHeader]];
     [buffer appendByte:0];
     return buffer;
 }

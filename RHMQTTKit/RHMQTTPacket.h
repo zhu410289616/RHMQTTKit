@@ -211,6 +211,42 @@ typedef NS_ENUM(UInt8, RHMQTTQosLevel) {
 
 @end
 
+#pragma mark - RHMQTTPublishAck
+
+@interface RHMQTTPublishAck : RHMQTTPacket
+
+- (instancetype)initWithMessageId:(int16_t)msgId;
+
+@end
+
+#pragma mark - RHMQTTPublishRec
+
+@interface RHMQTTPublishRec : RHMQTTPacket
+
+- (instancetype)initWithMessageId:(int16_t)msgId;
+
+@end
+
+#pragma mark - RHMQTTPublishRel
+
+@interface RHMQTTPublishRel : RHMQTTPacket
+
+- (instancetype)initWithMessageId:(int16_t)msgId;
+
+@end
+
+#pragma mark - RHMQTTPublishComp
+
+/**
+ 作为QoS level = 2消息流第四个，也是最后一个消息，由收到PUBREL的一方向另一方做出的响应消息。
+ 完整的消息一览，和PUBREL一致，除了消息类型。
+ */
+@interface RHMQTTPublishComp : RHMQTTPacket
+
+- (instancetype)initWithMessageId:(int16_t)msgId;
+
+@end
+
 // ------------------------------------------
 
 #pragma mark - RHMQTTSubscribe
