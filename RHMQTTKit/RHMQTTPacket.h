@@ -41,30 +41,6 @@ typedef NS_ENUM(UInt8, RHMQTTQosLevel) {
 
 // ------------------------------------------
 
-#pragma mark - NSData (MQTT)
-
-@interface NSData (MQTT)
-
-- (UInt8)valueFromByte;
-- (UInt16)valueWithBytes;
-
-@end
-
-// ------------------------------------------
-
-#pragma mark - NSMutableData (MQTT)
-
-@interface NSMutableData (MQTT)
-
-- (void)appendByte:(UInt8)byte;
-- (void)appendUInt16BigEndian:(UInt16)val;
-/** 这里有填充长度，需要控制字符串长度 */
-- (void)appendMQTTString:(NSString*)string;
-
-@end
-
-// ------------------------------------------
-
 #pragma mark - RHMQTTFixedHeader
 
 /** Fixed header/固定头部 */

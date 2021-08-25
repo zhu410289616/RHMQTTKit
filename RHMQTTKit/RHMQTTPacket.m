@@ -9,61 +9,6 @@
 
 // ------------------------------------------
 
-#pragma mark - NSData (MQTT)
-
-@implementation NSData (MQTT)
-
-- (UInt8)valueFromByte
-{
-    UInt8 value = 0;
-    [self getBytes:&value length:1];
-    return value;
-}
-
-- (UInt16)valueWithBytes
-{
-    UInt16 messageIdL = 0;
-    UInt16 messageIdH = 0;
-    [self getBytes:&messageIdH range:NSMakeRange(0, 1)];
-    [self getBytes:&messageIdL range:NSMakeRange(1, 1)];
-    UInt16 msgId = messageIdL | messageIdH << 8;
-    return msgId;
-}
-
-@end
-
-// ------------------------------------------
-
-#pragma mark - NSMutableData (MQTT)
-
-@implementation NSMutableData (MQTT)
-
-- (void)appendByte:(UInt8)byte
-{
-    [self appendBytes:&byte length:1];
-}
-
-- (void)appendUInt16BigEndian:(UInt16)val
-{
-    [self appendByte:val / 256];
-    [self appendByte:val % 256];
-}
-
-- (void)appendMQTTString:(NSString*)string
-{
-    UInt8 buf[2];
-    const char* utf8String = [string UTF8String];
-    int strLen = (int)strlen(utf8String);
-    buf[0] = strLen / 256;
-    buf[1] = strLen % 256;
-    [self appendBytes:buf length:2];
-    [self appendBytes:utf8String length:strLen];
-}
-
-@end
-
-// ------------------------------------------
-
 #pragma mark - RHMQTTFixedHeader
 
 @implementation RHMQTTFixedHeader
@@ -222,30 +167,33 @@
 
 - (NSData *)dataWithVariableHeader
 {
-    NSMutableData *buffer = [[NSMutableData alloc] init];
-    [buffer appendMQTTString:self.variableHeader.name];
-    [buffer appendByte:self.variableHeader.version];
-    [buffer appendByte:self.variableHeader.connectFlags];
-    [buffer appendUInt16BigEndian:self.variableHeader.keepAlive];
-    return buffer;
+    RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] init];
+    [byteBuffer writeInt16:self.variableHeader.name.length endianSwap:YES];
+    [byteBuffer writeString:self.variableHeader.name];
+    [byteBuffer writeInt8:self.variableHeader.version];
+    [byteBuffer writeInt8:self.variableHeader.connectFlags];
+    [byteBuffer writeInt16:self.variableHeader.keepAlive endianSwap:YES];
+    return [byteBuffer data];
 }
 
 - (NSData *)dataWithPayload
 {
-    NSMutableData *buffer = [[NSMutableData alloc] init];
+    RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] init];
     
-    [buffer appendMQTTString:self.payload.clientId];
+    [byteBuffer writeInt16:self.payload.clientId.length endianSwap:YES];
+    [byteBuffer writeString:self.payload.clientId];
     
-    //TODO: username, password
     if (self.payload.username.length > 0) {
-        [buffer appendMQTTString:self.payload.username];
-    }//
+        [byteBuffer writeInt16:self.payload.username.length endianSwap:YES];
+        [byteBuffer writeString:self.payload.username];
+    }
     
     if (self.payload.password.length > 0) {
-        [buffer appendMQTTString:self.payload.password];
-    }//
+        [byteBuffer writeInt16:self.payload.password.length endianSwap:YES];
+        [byteBuffer writeString:self.payload.password];
+    }
     
-    return buffer;
+    return [byteBuffer data];
 }
 
 - (NSData *)data
@@ -298,10 +246,11 @@
 
 - (NSData *)dataWithVariableHeader
 {
-    NSMutableData *buffer = [[NSMutableData alloc] init];
-    [buffer appendMQTTString:self.variableHeader.topic];
-    [buffer appendUInt16BigEndian:self.variableHeader.messageId];
-    return buffer;
+    RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] init];
+    [byteBuffer writeInt16:self.variableHeader.topic.length endianSwap:YES];
+    [byteBuffer writeString:self.variableHeader.topic];
+    [byteBuffer writeInt16:self.variableHeader.messageId endianSwap:YES];
+    return [byteBuffer data];
 }
 
 - (NSData *)dataWithPayload
@@ -364,7 +313,7 @@
     RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] init];
     [byteBuffer writeData:[self dataWithFixedHeader]];
     [byteBuffer writeInt8:2];
-    [byteBuffer writeInt16:self.variableHeader.messageId];
+    [byteBuffer writeInt16:self.variableHeader.messageId endianSwap:YES];
     return [byteBuffer data];
 }
 
@@ -386,7 +335,7 @@
     RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] init];
     [byteBuffer writeData:[self dataWithFixedHeader]];
     [byteBuffer writeInt8:2];
-    [byteBuffer writeInt16:self.variableHeader.messageId];
+    [byteBuffer writeInt16:self.variableHeader.messageId endianSwap:YES];
     return [byteBuffer data];
 }
 
@@ -408,7 +357,7 @@
     RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] init];
     [byteBuffer writeData:[self dataWithFixedHeader]];
     [byteBuffer writeInt8:2];
-    [byteBuffer writeInt16:self.variableHeader.messageId];
+    [byteBuffer writeInt16:self.variableHeader.messageId endianSwap:YES];
     return [byteBuffer data];
 }
 
@@ -430,7 +379,7 @@
     RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] init];
     [byteBuffer writeData:[self dataWithFixedHeader]];
     [byteBuffer writeInt8:2];
-    [byteBuffer writeInt16:self.variableHeader.messageId];
+    [byteBuffer writeInt16:self.variableHeader.messageId endianSwap:YES];
     return [byteBuffer data];
 }
 
@@ -465,51 +414,38 @@
 
 - (NSData *)dataWithVariableHeader
 {
-    NSMutableData *buffer = [[NSMutableData alloc] init];
-    [buffer appendUInt16BigEndian:self.variableHeader.messageId];
-    return buffer;
+    RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] init];
+    [byteBuffer writeInt16:self.variableHeader.messageId endianSwap:YES];
+    return [byteBuffer data];
 }
 
 - (NSData *)dataWithPayload
 {
-    NSMutableData *buffer = [[NSMutableData alloc] init];
+    RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] init];
     [self.payload.topics enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         RHMQTTTopic *temp = obj;
-        [buffer appendMQTTString:temp.topic];
-        [buffer appendByte:temp.qos];
+        [byteBuffer writeInt16:temp.topic.length endianSwap:YES];
+        [byteBuffer writeString:temp.topic];
+        [byteBuffer writeInt8:temp.qos];
     }];
-    return buffer;
+    return [byteBuffer data];
 }
 
 - (NSData *)data
 {
-    NSMutableData *buffer = [NSMutableData dataWithData:[super data]];
+    RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] init];
+    [byteBuffer writeData:[self dataWithFixedHeader]];
     
     NSData *variableHeaderData = [self dataWithVariableHeader];
     NSData *payloadData = [self dataWithPayload];
     
     //remaining length
     NSUInteger length = variableHeaderData.length + payloadData.length;
-    do {
-        UInt8 digit = length % 128;
-        length /= 128;
-        if (length > 0) {
-            digit |= 0x80;
-        }
-        [buffer appendBytes:&digit length:1];
-    } while (length > 0);
+    [byteBuffer writeData:[RHSocketUtils dataWithRawVarint32:length]];
+    [byteBuffer writeData:variableHeaderData];
+    [byteBuffer writeData:payloadData];
     
-    //
-    if (variableHeaderData) {
-        [buffer appendData:variableHeaderData];
-    }//if
-    
-    //
-    if (payloadData) {
-        [buffer appendData:payloadData];
-    }//if
-    
-    return buffer;
+    return [byteBuffer data];
 }
 
 @end
@@ -542,50 +478,37 @@
 
 - (NSData *)dataWithVariableHeader
 {
-    NSMutableData *buffer = [[NSMutableData alloc] init];
-    [buffer appendUInt16BigEndian:self.variableHeader.messageId];
-    return buffer;
+    RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] init];
+    [byteBuffer writeInt16:self.variableHeader.messageId endianSwap:YES];
+    return [byteBuffer data];
 }
 
 - (NSData *)dataWithPayload
 {
-    NSMutableData *buffer = [[NSMutableData alloc] init];
+    RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] init];
     [self.payload.topics enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         RHMQTTTopic *temp = obj;
-        [buffer appendMQTTString:temp.topic];
+        [byteBuffer writeInt16:temp.topic.length endianSwap:YES];
+        [byteBuffer writeString:temp.topic];
     }];
-    return buffer;
+    return [byteBuffer data];
 }
 
 - (NSData *)data
 {
-    NSMutableData *buffer = [NSMutableData dataWithData:[super data]];
+    RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] init];
+    [byteBuffer writeData:[self dataWithFixedHeader]];
     
     NSData *variableHeaderData = [self dataWithVariableHeader];
     NSData *payloadData = [self dataWithPayload];
     
     //remaining length
     NSUInteger length = variableHeaderData.length + payloadData.length;
-    do {
-        UInt8 digit = length % 128;
-        length /= 128;
-        if (length > 0) {
-            digit |= 0x80;
-        }
-        [buffer appendBytes:&digit length:1];
-    } while (length > 0);
+    [byteBuffer writeData:[RHSocketUtils dataWithRawVarint32:length]];
+    [byteBuffer writeData:variableHeaderData];
+    [byteBuffer writeData:payloadData];
     
-    //
-    if (variableHeaderData) {
-        [buffer appendData:variableHeaderData];
-    }//if
-    
-    //
-    if (payloadData) {
-        [buffer appendData:payloadData];
-    }//if
-    
-    return buffer;
+    return [byteBuffer data];
 }
 
 @end
@@ -606,9 +529,10 @@
 
 - (NSData *)data
 {
-    NSMutableData *buffer = [NSMutableData dataWithData:[self dataWithFixedHeader]];
-    [buffer appendByte:0];
-    return buffer;
+    RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] init];
+    [byteBuffer writeData:[self dataWithFixedHeader]];
+    [byteBuffer writeInt8:0];
+    return [byteBuffer data];
 }
 
 @end
@@ -629,9 +553,10 @@
 
 - (NSData *)data
 {
-    NSMutableData *buffer = [NSMutableData dataWithData:[super data]];
-    [buffer appendByte:0];
-    return buffer;
+    RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] init];
+    [byteBuffer writeData:[self dataWithFixedHeader]];
+    [byteBuffer writeInt8:0];
+    return [byteBuffer data];
 }
 
 @end

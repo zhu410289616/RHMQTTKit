@@ -147,7 +147,7 @@
 
 - (void)doSubscribeButtonAction
 {
-    NSString *topic = @"MQTT/Messenger/#";
+    NSString *topic = @"/MQTT/Messanger/#";
     [self showCommand:@"Subscribe" log:topic];
     
     //finance/stock/#   finance/sotkc/ibm/+
@@ -173,7 +173,7 @@
 
 - (void)doUnsubscribeButtonAction
 {
-    NSString *topic = @"MQTT/Messenger/#";
+    NSString *topic = @"/MQTT/Messanger/#";
     [self showCommand:@"Unsubscribe" log:topic];
     
     RHMQTTUnsubscribe *req = [RHMQTTUnsubscribe unsubscribeWithMessageId:22 topic:topic];
@@ -182,7 +182,7 @@
 
 - (void)doPublishButtonAction
 {
-    NSString *topic = @"MQTT/Messenger/rh";
+    NSString *topic = @"/MQTT/Messanger/rh";
     [self showCommand:@"Publish" log:topic];
     
     RHMQTTPublish *req = [[RHMQTTPublish alloc] init];
@@ -221,15 +221,13 @@
 
 - (void)channel:(RHSocketChannel *)channel received:(id<RHDownstreamPacket>)packet
 {
-    RHSocketLog(@"[RHMQTT] received: %@", packet);
+    RHMQTTPacket *mqttPacket = (RHMQTTPacket *)packet;
+    RHSocketLog(@"[RHMQTT] mqttPacket object: %@", [mqttPacket object]);
     
-    RHSocketPacketResponse *frame = (RHSocketPacketResponse *)packet;
-    RHSocketLog(@"[RHMQTT] RHPacketFrame: %@", [frame object]);
-    
-    NSData *buffer = [frame object];
-    UInt8 header = 0;
-    [buffer getBytes:&header range:NSMakeRange(0, 1)];
-    RHMQTTFixedHeader *fixedHeader = [[RHMQTTFixedHeader alloc] initWithByte:header];
+    NSData *buffer = mqttPacket.object;
+    NSData *remainingData = mqttPacket.remainingLengthData;
+    RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] initWithData:remainingData];
+    RHMQTTFixedHeader *fixedHeader = mqttPacket.fixedHeader;
     switch (fixedHeader.type) {
         case RHMQTTMessageTypeConnAck:
         {
@@ -253,8 +251,6 @@
             NSString *topic = [RHSocketUtils hexStringFromData:buffer];
             [self showCommand:@"ReceivedData PubAck" log:topic];
             
-            UInt16 msgId = [[buffer subdataWithRange:NSMakeRange(2, 2)] valueWithBytes];
-            NSLog(@"msgId: %d, ", msgId);
         }
             break;
         case RHMQTTMessageTypePubRec: {
@@ -263,8 +259,6 @@
             NSString *topic = [RHSocketUtils hexStringFromData:buffer];
             [self showCommand:@"ReceivedData PubRec" log:topic];
             
-            UInt16 msgId = [[buffer subdataWithRange:NSMakeRange(2, 2)] valueWithBytes];
-            RHSocketLog(@"msgId: %d, ", msgId);
         }
             break;
         case RHMQTTMessageTypePubRel: {
@@ -285,9 +279,6 @@
             NSString *topic = [RHSocketUtils hexStringFromData:buffer];
             [self showCommand:@"ReceivedData SubAck" log:topic];
             
-            UInt16 msgId = [[buffer subdataWithRange:NSMakeRange(2, 2)] valueWithBytes];
-            UInt8 grantedQos = [[buffer subdataWithRange:NSMakeRange(4, 1)] valueFromByte];
-            RHSocketLog(@"msgId: %d, grantedQos: %d", msgId, grantedQos);
         }
             break;
         case RHMQTTMessageTypePingResp:

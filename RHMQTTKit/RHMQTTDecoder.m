@@ -47,7 +47,7 @@
         int8_t fixedHeaderData = [byteBuffer readInt8:0];
         RHMQTTFixedHeader *fixedHeader = [[RHMQTTFixedHeader alloc] initWithByte:fixedHeaderData];
         
-        NSData *remainingLengthData = [byteBuffer readData:1 length:lengthMultiplier];
+        NSData *remainingLengthData = [byteBuffer readData:1+lengthMultiplier length:remainingLength];
         
 //        RHMQTTVariableHeader *variableHeader = nil;
 //        if (remainingLength - 1 - lengthMultiplier > 0) {

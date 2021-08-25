@@ -65,6 +65,7 @@
 - (void)channelOpened:(RHSocketChannel *)channel host:(NSString *)host port:(int)port
 {
     RHSocketLog(@"[RHMQTT] channelOpened: %@:%@", host, @(port));
+    [self.delegate channelOpened:channel host:host port:port];
     
     //需要在password_file.conf文件中设置帐号密码
     NSString *username = @"";//@"testuser";
@@ -77,6 +78,7 @@
 {
     RHSocketLog(@"[RHMQTT] channelClosed: %@", error);
     [self.tcpChannel.config.channelBeats stop];
+    [self.delegate channelClosed:channel error:error];
 }
 
 - (void)channel:(RHSocketChannel *)channel received:(id<RHDownstreamPacket>)packet
@@ -86,10 +88,13 @@
         return;
     }
     
+    [self.delegate channel:channel received:packet];
+    
     RHMQTTPacket *mqttPacket = (RHMQTTPacket *)packet;
     RHSocketLog(@"[RHMQTT] mqttPacket object: %@", [mqttPacket object]);
     
-    NSData *buffer = mqttPacket.object;
+    NSData *buffer = mqttPacket.remainingLengthData;
+    RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] initWithData:buffer];
     RHMQTTFixedHeader *fixedHeader = mqttPacket.fixedHeader;
     switch (fixedHeader.type) {
         case RHMQTTMessageTypeConnAck:
@@ -100,14 +105,18 @@
             break;
         case RHMQTTMessageTypePublish: {
             RHSocketLog(@"RHMQTTMessageTypePublish: %d", fixedHeader.type);
-            RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] initWithData:buffer];
-            int16_t topicLength = [byteBuffer readInt16:2 endianSwap:YES];
+            int16_t topicLength = [byteBuffer readInt16:0 endianSwap:YES];
             RHMQTTVariableHeader *variableHeader = [[RHMQTTVariableHeader alloc] init];
-            variableHeader.topic = [byteBuffer readString:2+2 length:topicLength];
-            variableHeader.messageId = [byteBuffer readInt16:2+2+topicLength endianSwap:YES];
+            variableHeader.topic = [byteBuffer readString:2 length:topicLength];
+            variableHeader.messageId = [byteBuffer readInt16:2+topicLength endianSwap:YES];
+            int16_t payloadLength = buffer.length - (2 + topicLength + 2);
+            NSData *msgData = [byteBuffer readData:2 + topicLength + 2 length:payloadLength];
+            RHMQTTPayload *payload = [[RHMQTTPayload alloc] init];
+            payload.message = msgData;
             RHMQTTPublish *publish = [[RHMQTTPublish alloc] initWithObject:buffer];
             publish.fixedHeader = fixedHeader;
             publish.variableHeader = variableHeader;
+            publish.payload = payload;
             
             /**
              兄弟，针对QoS2，为了便于说明，我们先假设一个方向，Server -> Client：
@@ -116,7 +125,10 @@
              ----PUBREL---->
              <----PUBCOMP---
              */
-            if (fixedHeader.qos == RHMQTTQosLevelAtLeastOnce) {
+            RHSocketLog(@"RHMQTTMessageTypePublish: msgid = %@, topic = %@, msg: %@", @(variableHeader.messageId), variableHeader.topic, [[NSString alloc] initWithData:msgData encoding:NSUTF8StringEncoding]);
+            if (fixedHeader.qos == RHMQTTQosLevelAtMostOnce) {
+                //at most once
+            } else if (fixedHeader.qos == RHMQTTQosLevelAtLeastOnce) {
                 /**
                  作为订阅者/服务器接收（QoS level = 1）PUBLISH消息之后对发送者的响应。
                  */
@@ -133,9 +145,8 @@
             break;
         case RHMQTTMessageTypePubAck: {
             RHSocketLog(@"RHMQTTMessageTypePubAck: %d", fixedHeader.type);
-            RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] initWithData:buffer];
             RHMQTTVariableHeader *variableHeader = [[RHMQTTVariableHeader alloc] init];
-            variableHeader.messageId = [byteBuffer readInt16:2 endianSwap:YES];
+            variableHeader.messageId = [byteBuffer readInt16:0 endianSwap:YES];
             RHMQTTPublish *publish = [[RHMQTTPublish alloc] init];
             publish.fixedHeader = fixedHeader;
             publish.variableHeader = variableHeader;
@@ -145,15 +156,15 @@
         {
             //qos = RHMQTTQosLevelExactlyOnce
             RHSocketLog(@"RHMQTTMessageTypePubRec: %d", fixedHeader.type);
-            UInt16 msgId = [[buffer subdataWithRange:NSMakeRange(2, 2)] valueWithBytes];
+            UInt16 msgId = [byteBuffer readInt16:0 endianSwap:YES];
             RHSocketLog(@"msgId: %d, ", msgId);
         }
             break;
         case RHMQTTMessageTypeSubAck:
         {
-            UInt16 msgId = [[buffer subdataWithRange:NSMakeRange(2, 2)] valueWithBytes];
-            UInt8 grantedQos = [[buffer subdataWithRange:NSMakeRange(4, 1)] valueFromByte];
-            RHSocketLog(@"msgId: %d, grantedQos: %d", msgId, grantedQos);
+            UInt16 msgId = [byteBuffer readInt16:0 endianSwap:YES];
+            NSData *grantedQos = [byteBuffer readData:2 length:byteBuffer.length - 2];
+            RHSocketLog(@"msgId: %@, grantedQos: %@", @(msgId), grantedQos);
         }
             break;
         case RHMQTTMessageTypePingResp:
