@@ -10,14 +10,7 @@
 
 #import <RHMQTTKit/RHMQTT.h>
 
-//RHSocket
-#import "RHSocketService.h"
-//MQTT
-#import "RHMQTTEncoder.h"
-#import "RHMQTTDecoder.h"
-#import "RHMQTT.h"
-
-@interface ViewController () <RHSocketChannelDelegate>
+@interface ViewController () <RHMQTTClientDelegate>
 {
     UITextField *_hostTextField;
     UITextField *_portTextField;
@@ -201,9 +194,9 @@
     _receivedTextView.text = logStr;
 }
 
-#pragma mark - RHSocketChannelDelegate
+#pragma mark - RHMQTTClientDelegate
 
-- (void)channelOpened:(RHSocketChannel *)channel host:(NSString *)host port:(int)port
+- (void)mqttConnected:(RHMQTTClient *)mqtt host:(NSString *)host port:(int)port
 {
     _connectButton.hidden = YES;
     
@@ -211,7 +204,7 @@
     [self showCommand:@"Connected" log:topic];
 }
 
-- (void)channelClosed:(RHSocketChannel *)channel error:(NSError *)error
+- (void)mqttDisconnect:(RHMQTTClient *)mqtt error:(NSError *)error
 {
     _connectButton.hidden = NO;
     
@@ -219,7 +212,7 @@
     [self showCommand:@"Disconnect" log:topic];
 }
 
-- (void)channel:(RHSocketChannel *)channel received:(id<RHDownstreamPacket>)packet
+- (void)mqtt:(RHMQTTClient *)mqtt received:(RHMQTTPacket *)packet
 {
     RHMQTTPacket *mqttPacket = (RHMQTTPacket *)packet;
     RHSocketLog(@"[RHMQTT] mqttPacket object: %@", [mqttPacket object]);
@@ -240,9 +233,6 @@
             RHSocketLog(@"RHMQTTMessageTypePublish: %d", fixedHeader.type);
             NSString *topic = [RHSocketUtils hexStringFromData:buffer];
             [self showCommand:@"ReceivedData Publish" log:topic];
-            
-            RHMQTTPublish *publish = [[RHMQTTPublish alloc] initWithObject:buffer];
-            RHSocketLog(@"publish payload: %@", [publish dataWithPayload]);
         }
             break;
         case RHMQTTMessageTypePubAck: {
@@ -292,6 +282,12 @@
         default:
             break;
     }
+}
+
+- (void)mqtt:(RHMQTTClient *)mqtt publish:(RHMQTTPublish *)publish
+{
+    NSString *topic = [[NSString alloc] initWithData:publish.payload.message encoding:NSUTF8StringEncoding];
+    [self showCommand:@"Received publish message" log:topic];
 }
 
 @end

@@ -198,33 +198,19 @@
 
 - (NSData *)data
 {
-    NSMutableData *buffer = [NSMutableData dataWithData:[super data]];
+    RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] init];
+    [byteBuffer writeData:[self dataWithFixedHeader]];
     
     NSData *variableHeaderData = [self dataWithVariableHeader];
     NSData *payloadData = [self dataWithPayload];
     
     //remaining length
     NSUInteger length = variableHeaderData.length + payloadData.length;
-    do {
-        UInt8 digit = length % 128;
-        length /= 128;
-        if (length > 0) {
-            digit |= 0x80;
-        }
-        [buffer appendBytes:&digit length:1];
-    } while (length > 0);
+    [byteBuffer writeData:[RHSocketUtils dataWithRawVarint32:length]];
+    [byteBuffer writeData:variableHeaderData];
+    [byteBuffer writeData:payloadData];
     
-    //
-    if (variableHeaderData) {
-        [buffer appendData:variableHeaderData];
-    }//if
-    
-    //
-    if (payloadData) {
-        [buffer appendData:payloadData];
-    }//if
-    
-    return buffer;
+    return [byteBuffer data];
 }
 
 @end
@@ -266,33 +252,19 @@
 
 - (NSData *)data
 {
-    NSMutableData *buffer = [NSMutableData dataWithData:[super data]];
+    RHSocketByteBuf *byteBuffer = [[RHSocketByteBuf alloc] init];
+    [byteBuffer writeData:[self dataWithFixedHeader]];
     
     NSData *variableHeaderData = [self dataWithVariableHeader];
     NSData *payloadData = [self dataWithPayload];
     
     //remaining length
     NSUInteger length = variableHeaderData.length + payloadData.length;
-    do {
-        UInt8 digit = length % 128;
-        length /= 128;
-        if (length > 0) {
-            digit |= 0x80;
-        }
-        [buffer appendBytes:&digit length:1];
-    } while (length > 0);
+    [byteBuffer writeData:[RHSocketUtils dataWithRawVarint32:length]];
+    [byteBuffer writeData:variableHeaderData];
+    [byteBuffer writeData:payloadData];
     
-    //
-    if (variableHeaderData) {
-        [buffer appendData:variableHeaderData];
-    }//if
-    
-    //
-    if (payloadData) {
-        [buffer appendData:payloadData];
-    }//if
-    
-    return buffer;
+    return [byteBuffer data];
 }
 
 @end
